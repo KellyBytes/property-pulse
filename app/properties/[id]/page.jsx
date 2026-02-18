@@ -10,7 +10,6 @@ const PropertyPage = async ({ params }) => {
 
   const { id } = await params;
   const property = await Property.findById(id).lean();
-  console.log(property);
 
   return (
     <>
