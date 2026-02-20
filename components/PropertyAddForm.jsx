@@ -33,7 +33,7 @@ const PropertyAddForm = () => {
           id="name"
           name="name"
           className="border rounded w-full py-2 px-3 mb-2"
-          placeholder="eg. Beautiful Apartment In Miami"
+          placeholder="eg. Beautiful Apartment In Vancouver"
           required
         />
       </div>
@@ -75,7 +75,7 @@ const PropertyAddForm = () => {
           id="state"
           name="location.state"
           className="border rounded w-full py-2 px-3 mb-2"
-          placeholder="State"
+          placeholder="Province"
           required
         />
         <input
