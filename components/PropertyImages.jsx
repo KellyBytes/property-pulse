@@ -36,4 +36,5 @@ const PropertyImages = ({ images }) => {
     </section>
   );
 };
+
 export default PropertyImages;

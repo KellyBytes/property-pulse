@@ -10,7 +10,7 @@ import { signIn, signOut, useSession, getProviders } from 'next-auth/react';
 
 const Navbar = () => {
   const { data: session } = useSession();
-  console.log(session);
+  // console.log(session);
   const profileImage = session?.user?.image;
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -185,6 +185,7 @@ const Navbar = () => {
                       role="menuitem"
                       tabIndex="-1"
                       id="user-menu-item-0"
+                      onClick={() => setIsProfileMenuOpen(false)}
                     >
                       Your Profile
                     </Link>
@@ -194,6 +195,7 @@ const Navbar = () => {
                       role="menuitem"
                       tabIndex="-1"
                       id="user-menu-item-2"
+                      onClick={() => setIsProfileMenuOpen(false)}
                     >
                       Saved Properties
                     </Link>
@@ -258,4 +260,5 @@ const Navbar = () => {
     </nav>
   );
 };
+
 export default Navbar;
