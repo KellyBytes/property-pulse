@@ -11,7 +11,8 @@ Users can:
 - Create and manage property listings
 - Upload images
 - Bookmark properties
-- Send messages to property owners
+- Send inquiry messages to property owners (renters)
+- Manage received messages with unread/read status and deletion (owners)
 - Search and paginate listings
 
 This project was built while completing a structured Next.js course, with additional improvements and deployment configuration.
@@ -66,7 +67,7 @@ This project was built while completing a structured Next.js course, with additi
 - Mapbox integration for property location
 - Geocoding for latitude/longitude
 - Bookmark system
-- Messaging system with unread message tracking
+- Inquiry messaging system between renters and property owners, with unread/read tracking and deletion
 - Global state management for message count
 - Search functionality
 - Lightbox (PhotoSwipe) for image previews
@@ -147,7 +148,7 @@ Instead of relying solely on API routes, this project uses **Server Actions** to
 - Submit property data
 - Delete properties
 - Bookmark listings
-- Send messages
+- Send inquiry messages to property owners with unread/read tracking
 
 This improved:
 - Security (no exposed mutation endpoints)
