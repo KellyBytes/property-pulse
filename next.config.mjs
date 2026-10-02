@@ -1,5 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    // Don't keep fetch responses (e.g. temporary geocoding) across HMR in dev
+    serverComponentsHmrCache: false,
+  },
   images: {
     remotePatterns: [
       {

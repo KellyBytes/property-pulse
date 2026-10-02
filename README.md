@@ -65,7 +65,7 @@ This project was built while completing a structured Next.js course, with additi
 ### Advanced Functionality
 - Server Actions for data mutations
 - Mapbox integration for property location
-- Geocoding for latitude/longitude
+- Server-side geocoding (Mapbox Geocoding API) for latitude/longitude
 - Bookmark system
 - Inquiry messaging system between renters and property owners, with unread/read tracking and deletion
 - Global state management for message count

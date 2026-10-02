@@ -12,9 +12,9 @@ There is no linter, formatter script, or test suite configured.
 
 ## Stack
 
-Next.js 16 App Router + React 19, plain JavaScript (`.js`/`.jsx`, no TypeScript), MongoDB via Mongoose 9, NextAuth v4 (Google OAuth only), Tailwind CSS 4, Cloudinary for image uploads, Mapbox + Google Geocoding for maps. Deployed on Vercel. Path alias `@/*` maps to the repo root.
+Next.js 16 App Router + React 19, plain JavaScript (`.js`/`.jsx`, no TypeScript), MongoDB via Mongoose 9, NextAuth v4 (Google OAuth only), Tailwind CSS 4, Cloudinary for image uploads, Mapbox for maps and geocoding. Deployed on Vercel. Path alias `@/*` maps to the repo root.
 
-Required env vars: `MONGODB_URI`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `NEXTAUTH_SECRET`/`NEXTAUTH_URL` (NextAuth), `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`, `NEXT_PUBLIC_DOMAIN`, `NEXT_PUBLIC_MAPBOX_TOKEN`, `NEXT_PUBLIC_GOOGLE_GEOCODING_API_KEY`. See `.env.sample`.
+Required env vars: `MONGODB_URI`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `NEXTAUTH_SECRET`/`NEXTAUTH_URL` (NextAuth), `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`, `NEXT_PUBLIC_DOMAIN`, `NEXT_PUBLIC_MAPBOX_TOKEN` (map tiles in the browser), `MAPBOX_GEOCODING_TOKEN` (server-only geocoding; must not be URL-restricted). See `.env.sample`.
 
 ## Architecture
 
@@ -39,6 +39,8 @@ Form fields use dotted names (`location.city`, `rates.nightly`, `seller_info.ema
 **Models** (`models/`): `User` (with `bookmarks: [Property ref]`), `Property` (`owner` ref, `is_featured` flag drives `FeaturedProperties`), `Message` (`sender`, `recipient`, `property` refs, `read` flag). Models use the `models.X || model('X', schema)` pattern to survive hot reload.
 
 **Pagination & search:** `/properties` reads `page`/`pageSize` from `searchParams` (note `searchParams` and `params` are Promises in Next 16 and must be awaited). `/properties/search-results` filters by `location` and `propertyType` query params.
+
+**Map & geocoding:** `components/PropertyMap.jsx` is an async Server Component that calls `utils/geocodeAddress.js` (Mapbox Geocoding v6 structured input) on every view and renders the client `PropertyMapView`, or the address text if geocoding fails. These are *temporary* geocoding results: Mapbox forbids caching or storing them, so coordinates are never saved to MongoDB, the fetch uses `cache: 'no-store'`, `app/properties/[id]/page.jsx` is `force-dynamic`, and `serverComponentsHmrCache` is disabled. Don't add `unstable_cache`/`'use cache'` around this path. `country` is deliberately not sent (in structured input it takes a single code and a hard filter returns wrong matches); results are instead rejected unless `country_code` is `us`/`ca` and `match_code.confidence` isn't `low`.
 
 **Remote images:** `next.config.mjs` whitelists `lh3.googleusercontent.com` (Google avatars) and `res.cloudinary.com`; add hosts there if using `next/image` with new sources.
 
