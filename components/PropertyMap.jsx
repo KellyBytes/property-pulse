@@ -1,85 +1,26 @@
-'use client';
-import { useEffect, useState } from 'react';
-import { setDefaults, fromAddress } from 'react-geocode';
-import Map, { Marker } from 'react-map-gl/mapbox';
-import 'mapbox-gl/dist/mapbox-gl.css';
-import Image from 'next/image';
-import pin from '@/assets/images/pin.svg';
-import Spinner from './Spinner';
+import { FaMapMarker } from 'react-icons/fa';
+import { geocodeAddress } from '@/utils/geocodeAddress';
+import PropertyMapView from './PropertyMapView';
 
-const PropertyMap = ({ property }) => {
-  const [lat, setLat] = useState(null);
-  const [lng, setLng] = useState(null);
-  const [viewport, setViewport] = useState({
-    latitude: 0,
-    longitude: 0,
-    zoom: 12,
-    width: '100%',
-    height: '500px',
-  });
-  const [loading, setLoading] = useState(true);
-  const [geocodeError, setGeocodeError] = useState(false);
+const PropertyMap = async ({ property }) => {
+  const coords = await geocodeAddress(property.location);
 
-  setDefaults({
-    key: process.env.NEXT_PUBLIC_GOOGLE_GEOCODING_API_KEY,
-    language: 'en',
-    region: 'ca',
-  });
+  if (!coords) {
+    // Fall back to the address text when the location can't be geocoded
+    const { street, city, state, zipcode } = property.location;
+    const address = [street, city, [state, zipcode].filter(Boolean).join(' ')]
+      .filter(Boolean)
+      .join(', ');
 
-  useEffect(() => {
-    const fetchCoords = async () => {
-      try {
-        const res = await fromAddress(
-          `${property.location.street} ${property.location.city} ${property.location.state} ${property.location.zipcode}`,
-        );
+    return (
+      <div className="flex items-center text-gray-700">
+        <FaMapMarker className="text-orange-700 mr-2" />
+        <p>{address}</p>
+      </div>
+    );
+  }
 
-        // Check geocode results
-        if (res.results.length === 0) {
-          setGeocodeError(true);
-          return;
-        }
-
-        const { lat, lng } = res.results[0].geometry.location;
-        setLat(lat);
-        setLng(lng);
-        setViewport({
-          ...viewport,
-          latitude: lat,
-          longitude: lng,
-        });
-      } catch (err) {
-        console.log(err);
-        setGeocodeError(true);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCoords();
-  }, []);
-
-  if (loading) return <Spinner />;
-  if (geocodeError)
-    return <div className="text-xl">No location data found</div>;
-
-  return (
-    !loading && (
-      <Map
-        mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN}
-        initialViewState={{
-          longitude: lng,
-          latitude: lat,
-          zoom: 15,
-        }}
-        style={{ width: '100%', height: 500 }}
-        mapStyle="mapbox://styles/mapbox/streets-v9"
-      >
-        <Marker longitude={lng} latitude={lat} anchor="bottom">
-          <Image src={pin} alt="location" width={40} height={40} />
-        </Marker>
-      </Map>
-    )
-  );
+  return <PropertyMapView lat={coords.lat} lng={coords.lng} />;
 };
 
 export default PropertyMap;

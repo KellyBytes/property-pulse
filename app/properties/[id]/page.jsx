@@ -10,6 +10,10 @@ import Link from 'next/link';
 import { FaArrowLeft } from 'react-icons/fa';
 import { convertToSerializableObject } from '@/utils/convertToObject';
 
+// Render on every request: the map uses temporary Mapbox geocoding results,
+// which must not be stored in the Full Route Cache
+export const dynamic = 'force-dynamic';
+
 const PropertyPage = async ({ params }) => {
   await connectDB();
 
